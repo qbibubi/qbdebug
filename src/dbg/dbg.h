@@ -6,6 +6,7 @@
 #include <sys/user.h>
 #include <errno.h>
 #include <assert.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "../arch.h"
@@ -54,7 +55,7 @@ typedef enum {
 } dbg_result_t;
 
 typedef struct {
-    unsigned long address;
+    uint64_t address;
     unsigned long original_byte;
     int enabled;
 } breakpoint_t;
@@ -67,10 +68,9 @@ typedef struct {
 #ifdef __x86_64
 
 typedef struct {
-    unsigned long r15, r14, r13, r12, rbp, rbx, r11, r10, r9, r8;
-    unsigned long rax, rcx, rdx, rsi, rdi;
-    unsigned long rip, rsp;
-    unsigned long cs, eflags, ss, ds, es, fs, gs;
+    uint64_t r15, r14, r13, r12, rbp, rbx, r11, r10, r9, r8;
+    uint64_t rax, rcx, rdx, rsi, rdi, orig_rax;
+    uint64_t rip, cs, eflags, rsp, ss, fs_base, gs_base, ds, es, fs, gs;
 } dbg_regs_t;
 
 #else
