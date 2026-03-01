@@ -12,8 +12,8 @@
 #define REGISTER_ENTRY(name)    { #name, offsetof(dbg_regs_t, name) }
 
 typedef struct {
-    const char* name;
-    unsigned long offset;
+    const char*     name;
+    unsigned long   offset;
 } dbg_reg_t;
 
 static const dbg_reg_t registers[] = {
@@ -78,13 +78,13 @@ static void cli_print_reg(const char* name, uint64_t value) {
     }
 
     if (strcmp(name, "gs") == 0 && value == 0) {
-        // value here has to be come `gs_base` register
+        // value here has to be `gs_base` register
         fprintf(stdout, REGISTER_FMT, name, value);
         return;
     }
     
     if (strcmp(name, "fs") == 0 && value == 0) {
-        // value here has to be come `fs_base` register
+        // value here has to be `fs_base` register
         fprintf(stdout, REGISTER_FMT, name, value);
         return;
     }
@@ -131,6 +131,10 @@ void cli_get_regs(dbg_t* dbg, const user_input_t* input) {
         int found = 0;
 
         for (size_t j = 0; j < registers_size; ++j) {
+            if (strcmp(name, registers[j].name) != 0) {
+                continue;
+            }
+
             const uint64_t value = *(uint64_t*)((uint8_t*)&regs + registers[j].offset);
 
             cli_print_reg(name, value);
