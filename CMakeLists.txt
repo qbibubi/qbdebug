@@ -8,6 +8,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(qbdbg
     src/main.c
+    src/help.c
 
     src/os/os.c
 

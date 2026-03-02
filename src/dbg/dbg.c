@@ -48,7 +48,8 @@ dbg_result_t dbg_launch(dbg_t *dbg, char** argv) {
         return DBG_ERR_FORK;
     }
     
-    if (pid == 0) {
+    const int is_child = (pid == 0);
+    if (is_child) {
         if (os_traceme() != OS_OK) {
             _exit(1);
         }
@@ -58,7 +59,8 @@ dbg_result_t dbg_launch(dbg_t *dbg, char** argv) {
         }
     }
 
-    if (pid > 0) {
+    const int is_parent = (pid > 0);
+    if (is_parent) {
         dbg->pid = pid;
         dbg->state = DBG_STOPPED;
 
