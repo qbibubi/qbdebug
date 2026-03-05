@@ -1,18 +1,26 @@
 #include "cli/cli.h"
+#include "cli/cli_args.h"
 #include "dbg/dbg.h"
-#include "help.h"
 
 int main(int argc, char* argv[]) {
-    for (int i = 1; i < argc; ++i) {
-        if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
-            help_print();
-            return 0;
-        }
+    char** target_argv = NULL;
+
+    if (cli_parse_arguments(argc, argv, &target_argv) != 0) {
+        return 1;
     }
 
     dbg_t dbg;
     if (dbg_init(&dbg) != DBG_OK) {
         return 1; 
+    }
+
+    if (target_argv != NULL) {
+        const dbg_result_t result = dbg_launch(&dbg, target_argv);
+        const char* message = dbg_result_str(result);
+        if (message) {
+            fprintf(stderr, ERROR_FMT, message);
+            return 1;
+        }
     }
 
     using_history();

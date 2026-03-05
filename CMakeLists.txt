@@ -8,8 +8,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(qbdbg
     src/main.c
-    src/help.c
-
     src/os/os.c
 
     src/dbg/dbg.c
@@ -18,6 +16,7 @@ add_executable(qbdbg
     src/dbg/dbg_step.c
 
     src/cli/cli.c
+    src/cli/cli_args.c
     src/cli/cli_breakpoint.c
     src/cli/cli_regs.c
     src/cli/cli_step.c
