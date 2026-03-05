@@ -11,10 +11,13 @@ typedef struct {
 } cli_option_t;
 
 static const cli_option_t cli_options[] = {
-    { "-h, --help",     "Print this message and exit" },
-    { "-v, --version",  "Print version" },
+    { "-h, --help",     "Print this message and exit"   },
+    { "-v, --version",  "Print version"                 },
 };
 
+/**
+ * @brief Prints out `--help` or `-h` flag message
+ */
 static void cli_print_help(void) {
     fprintf(stdout, "qbdbg - a lightweight x86-64 debugger\n\n");
     fprintf(stdout, "USAGE\n");
@@ -27,6 +30,11 @@ static void cli_print_help(void) {
     fprintf(stdout, "\n");
 }
 
+/**
+ * @brief Prints out current `qbdbg` version
+ *
+ * @note Could this be somehow automated with CMAKE? 
+ */
 static void cli_print_version(void) {
     fprintf(stdout, "qbdbg version 0.1\n"); 
 }
