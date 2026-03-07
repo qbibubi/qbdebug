@@ -14,7 +14,7 @@ The debugger is split into three responsibility layers
 
 CLI interface layer has no idea about the underlying OS layer. Data travels downwards through the layers to decouple them from responsibilities. This allows for cleaner and more maintainable style of the codebase.
 
-After issuing `launch` command, the debugger uses `fork()` to spawn a child process. Child process calls `ptrace(PTRACE_TRACEME)` to allow the parent (debugger) process to trace its execution. Then the control flow is redirected to the parent where the user can send in debugger commands through a terminal interface integrated into the debugger.
+After issuing `launch` command, the debugger uses `fork()` to spawn a child process. Child process calls `ptrace(PTRACE_TRACEME)` to allow the debugger process to trace its execution. Then the control flow is redirected to the parent where the user can send in debugger commands through a terminal interface integrated into the debugger.
 
 The architecture currently support only Linux operating systems. I am considering adding Windows OS support for the debugger in the future.
 
@@ -54,6 +54,19 @@ To run the debugger run the compiled binary in `/build` directory of the project
 
 ```bash
 ./build/qbdbg
+```
+
+Debugger supports `--help` and `-h` flags
+
+```bash
+qbdbg - a lightweight x86-64 debugger
+
+USAGE
+    qbdbg [options] [program [args...]]
+
+OPTIONS
+  -h, --help         Print this message and exit
+  -v, --version      Print version
 ```
 
 Another option is to pass binary path as command line argument with flags

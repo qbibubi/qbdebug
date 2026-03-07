@@ -32,11 +32,9 @@ static void cli_print_help(void) {
 
 /**
  * @brief Prints out current `qbdbg` version
- *
- * @note Could this be somehow automated with CMAKE? 
  */
 static void cli_print_version(void) {
-    fprintf(stdout, "qbdbg version 0.1\n"); 
+    fprintf(stdout, "qbdbg version %s\n", QBDBG_VERSION); 
 }
 
 int cli_parse_arguments(int argc, char** argv, char*** target_argv) {
