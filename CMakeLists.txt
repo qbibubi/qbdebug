@@ -6,7 +6,7 @@ set(CMAKE_C_COMPILER clang)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-add_definitions( -DQBDBG_VERSION=${CMAKE_PROJECT_VERSION} )
+add_definitions( -DQBDBG_VERSION="${CMAKE_PROJECT_VERSION}" )
 
 add_executable(qbdbg
     src/main.c
