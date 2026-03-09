@@ -12,16 +12,17 @@ The debugger is split into three responsibility layers
 - `dbg` - handles state management of debugger context and prepares data to be forwarded to `os` layer.
 - `os` - handles `ptrace` API and system calls.
 
-CLI interface layer has no idea about the underlying OS layer. Data travels downwards through the layers to decouple them from responsibilities. This allows for cleaner and more maintainable style of the codebase.
+CLI interface layer has no idea about the underlying OS layer. 
+Commands and execution flow travel downwards through the layers, while state and data are bubbled back up. This unidirectional flow decouples them from responsibilities, allowing for cleaner and more maintainable style of the codebase.
 
-After issuing `launch` command, the debugger uses `fork()` to spawn a child process. Child process calls `ptrace(PTRACE_TRACEME)` to allow the debugger process to trace its execution. Then the control flow is redirected to the parent where the user can send in debugger commands through a terminal interface integrated into the debugger.
+After issuing `launch` command, the debugger uses `fork()` to spawn a child process. Child process calls `ptrace(PTRACE_TRACEME, ...)` to allow the debugger process to trace its execution. The control flow is redirected to the parent where the user can send in debugger commands through a terminal interface integrated into the debugger.
 
-The architecture currently support only Linux operating systems. I am considering adding Windows OS support for the debugger in the future.
+The architecture currently supports only Linux operating systems. Due to the projects architectural nature it allows for swapping out the `ptrace` backend with the `Win32` Debuggin API in the future to support Windows. 
 
 # Features
 
-- Reading and writing CPU registers
-- Spawning and attaching to a child processes
+- [x] Reading and writing CPU registers (x86_64 support only)
+- [x] Spawning and attaching to a child processes
 - [ ] Setting software breakpoints
 - [ ] Support for multiple commands with abbreviations
 - [ ] Handling multithreaded processes
@@ -29,36 +30,54 @@ The architecture currently support only Linux operating systems. I am considerin
 # Prerequisites
 
 - Linux (requires `sys/ptrace.h` and ELF binaries)
-- GDB `readline`
-- `clang` compiler
+- GNU Readline libary (e.g.. `libreadline-dev`)
+- C compiler (defaults to `clang`)
 - `cmake` (3.20+)
+- `make`
 
-# Build
+# Building the project
 
-To build the project you can use the `Makefile` provided in the root of the directory to build the debugger
+Before proceeding to building the project ensure you have installed all prerequisites. Build process has been simplified with a Makefile wrapper around CMake.
 
 ```bash
-make
+make run
 ```
 
-Alternatively you can build it manually directly with `cmake`
+## Available commands
+
+- `make` or `make build` - Configures (if necessary) and compiles the project. Executable gets placed in `build/{BUILD_TYPE}/qbdg`.
+- `make run` - Builds the project and runs the binary.
+- `make configure` - Runs Cmake to generate build files without compiling the code.
+- `make clean` - Deletes entire `/build` directory removing all compiled and cached files.
+
+## Advanced configuration
+
+It is possible to customize the build behavior by passing variables to `make` command. By default the script uses `clang` compiler and builds in `Debug` mode. 
+
+Changing the build type is done by overriding the `BUILD_TYPE` variable:
 
 ```bash
-cmake -S . -B build
-cmake --build build
+make build BUILD_TYPE=Release
+```
+
+Changing the compiler is done by overriding the exported `CC` variable:
+
+```bash
+make build CC=gcc
 ```
 
 # Usage
 
-To run the debugger run the compiled binary in `/build` directory of the project
+To run the debugger run the compiled binary in `/build/{BUILD_TYPE}` directory. 
 
 ```bash
-./build/qbdbg
+# Debug mode
+./build/Debug/qbdbg
 ```
 
 Debugger supports `--help` and `-h` flags
 
-```bash
+```
 qbdbg - a lightweight x86-64 debugger
 
 USAGE
@@ -69,18 +88,11 @@ OPTIONS
   -v, --version      Print version
 ```
 
-Another option is to pass binary path as command line argument with flags
-
-```bash
-# example
-./build/qbdbg /usr/bin/ls -l -a
-```
-
-Once inside the debugger you should see the debugger CLI interface starting with `qbdbg>` marker before entering commands.
+Once inside the debugger you will see the debugger CLI interface starting with `qbdbg>` prompt.
 
 ## List of commands
 
-- `launch <path_to_binary> [flags...]` - Launches a new process to be debugged (does not handle passing arguments yet)
+- `launch <path_to_binary> [flags...]` - Launches process to be debugged 
 - `quit` - Exits the debugger 
 - `rs <register> <value>` - Sets a register to a provided value
 - `rg [(optional) registers...]` - Without any arguments all registers get displayed. It is possible to pass individual registers as arguments to get their values  
