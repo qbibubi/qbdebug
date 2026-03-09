@@ -35,7 +35,7 @@ os_result_t os_detach(const pid_t pid) {
 }
 
 os_result_t os_wait(const pid_t pid, int *out_status) {
-    const pid_t result = waitpid(pid, out_status, WUNTRACED | WCONTINUED);
+    const pid_t result = waitpid(pid, out_status, 0);
     if (result == -1) {
         return OS_ERR_WAIT;
     }

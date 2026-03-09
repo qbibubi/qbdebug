@@ -4,6 +4,7 @@
 #define DBG_H
 
 #include <sys/user.h>
+#include <sys/types.h>
 #include <errno.h>
 #include <assert.h>
 #include <stdint.h>

@@ -2,38 +2,28 @@ cmake_minimum_required(VERSION 3.20)
 
 project(QBDBG VERSION 0.1 LANGUAGES C)
 
-set(CMAKE_C_COMPILER clang)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-add_definitions( -DQBDBG_VERSION="${CMAKE_PROJECT_VERSION}" )
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to `Debug` - no build type specified")
 
-add_executable(qbdbg
-    src/main.c
-    src/os/os.c
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS 
+        "Debug" 
+        "Release" 
+        "RelWithDebInfo" 
+        "MinSizeRel"
+    )
+endif()
 
-    src/dbg/dbg.c
-    src/dbg/dbg_breakpoint.c
-    src/dbg/dbg_regs.c
-    src/dbg/dbg_step.c
-
-    src/cli/cli.c
-    src/cli/cli_args.c
-    src/cli/cli_breakpoint.c
-    src/cli/cli_regs.c
-    src/cli/cli_step.c
+# Include our own modules from `/cmake`
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 )
+include(compiler_warnings)
 
-target_link_libraries(qbdbg PRIVATE
-    readline
-)
+enable_testing()
 
-target_compile_options(qbdbg PRIVATE
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Wshadow
-    -Wstrict-prototypes
-    -Werror=unused-result
-    -g
-)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+add_subdirectory(src)
